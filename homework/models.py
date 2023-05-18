@@ -39,7 +39,6 @@ class Product:
         return hash(self.name + self.description)
 
 
-@dataclass
 class Cart:
     """
     Класс корзины. В нем хранятся продукты, которые пользователь хочет купить.
@@ -48,6 +47,9 @@ class Cart:
 
     # Словарь продуктов и их количество в корзине
     products: dict[Product, int]
+
+    def __init__(self):
+        self.products = {}
 
     def add_product(self, product: Product, buy_count=1):
         """

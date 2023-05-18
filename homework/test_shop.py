@@ -10,6 +10,9 @@ from homework.models import Product, Cart
 def product():
     return Product("book", 100, "This is a book", 1000)
 
+@pytest.fixture
+def cart():
+    return Cart()
 
 class TestProducts:
     """
@@ -37,6 +40,7 @@ class TestProducts:
     def test_product_buy_more_than_available(self, product):
         # TODO напишите проверки на метод buy,
         #  которые ожидают ошибку ValueError при попытке купить больше, чем есть в наличии
+
         with pytest.raises(ValueError, 'Продуктов не хватает!'):
             product.buy(quantity=1500)
 
@@ -69,7 +73,7 @@ class TestCart:
         cart.add_product(product, 10)
         cart.remove_product(product, 7)
 
-        assert cart.products == 3
+        assert cart.products == {product: 3}
 
     def test_buy_with_empty_cart(self, product):
         cart = Cart()
