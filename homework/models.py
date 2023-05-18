@@ -1,3 +1,7 @@
+from dataclasses import dataclass
+
+
+@dataclass
 class Product:
     """
     Класс продукта
@@ -6,12 +10,6 @@ class Product:
     price: float
     description: str
     quantity: int
-
-    def __init__(self, name, price, description, quantity):
-        self.name = name
-        self.price = price
-        self.description = description
-        self.quantity = quantity
 
     def check_quantity(self, quantity) -> bool:
         """
@@ -29,15 +27,19 @@ class Product:
             Проверьте количество продукта используя метод check_quantity
             Если продуктов не хватает, то выбросите исключение ValueError
         """
-        if self.quantity(quantity):
+        if self.check_quantity(quantity):
             self.quantity -= quantity
         else:
             raise ValueError("Недостаточное количество продукта")
-
+        """
+        Метод возвращает Хэш обьекта , состоящего из имени и описания продукта. 
+        Предназначен для сравнения
+        """
     def __hash__(self):
         return hash(self.name + self.description)
 
 
+@dataclass
 class Cart:
     """
     Класс корзины. В нем хранятся продукты, которые пользователь хочет купить.
@@ -46,10 +48,6 @@ class Cart:
 
     # Словарь продуктов и их количество в корзине
     products: dict[Product, int]
-
-    def __init__(self):
-        # По-умолчанию корзина пустая
-        self.products = {}
 
     def add_product(self, product: Product, buy_count=1):
         """
@@ -67,13 +65,19 @@ class Cart:
         Если remove_count не передан, то удаляется вся позиция
         Если remove_count больше, чем количество продуктов в позиции, то удаляется вся позиция
         """
-        raise NotImplementedError
+        if remove_count is None or remove_count >= self.products[product]:
+            del self.products[product]
+        else:
+            self.products[product] -= remove_count
 
     def clear(self):
-        raise NotImplementedError
+        self.products.clear()
 
+        """
+        Метод возвращает итоговую сумму покупки в корзине
+        """
     def get_total_price(self) -> float:
-        raise NotImplementedError
+        return sum(product.price * quantity for product, quantity in self.products.items())
 
     def buy(self):
         """
@@ -81,4 +85,9 @@ class Cart:
         Учтите, что товаров может не хватать на складе.
         В этом случае нужно выбросить исключение ValueError
         """
-        raise NotImplementedError
+        for product, quantity in self.products.items():
+            if not product.check_quantity(quantity):
+                raise ValueError("Недостаточное количество продукта!!!")
+            else:
+                product.buy(quantity)
+        self.clear()
