@@ -41,8 +41,9 @@ class TestProducts:
         # TODO напишите проверки на метод buy,
         #  которые ожидают ошибку ValueError при попытке купить больше, чем есть в наличии
 
-        with pytest.raises(ValueError, 'Продуктов не хватает!'):
-            product.buy(quantity=1500)
+        with pytest.raises(ValueError, match='Недостаточное количество продукта'):
+            product.buy(quantity=1000)
+            product.buy(quantity=20)
 
 
 class TestCart:
@@ -75,8 +76,8 @@ class TestCart:
 
         assert cart.products == {product: 3}
 
-    def test_buy_with_empty_cart(self, product):
-        cart = Cart()
+    def test_buy_product_more_than_stock(self,cart, product):
+        cart.add_product(product, 1100)
 
-        with pytest.raises(ValueError,'Нет товаров в корзине!!!'):
-            cart.buy()
+        with pytest.raises(ValueError, match='Нет товаров на cкладе!!!' ):
+            assert cart.buy()

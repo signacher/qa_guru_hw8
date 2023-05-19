@@ -89,7 +89,7 @@ class Cart:
         """
         for product, quantity in self.products.items():
             if not product.check_quantity(quantity):
-                raise ValueError("Недостаточное количество продукта!!!")
+                raise ValueError('Нет товаров на cкладе!!!')
             else:
                 product.buy(quantity)
         self.clear()
